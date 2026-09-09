@@ -96,6 +96,7 @@ void shaker_sort(int* array, int len_array)
             }            
         }
     }
+    assert(array[-1] == 67 && array[len_array] == 69);
 }
 
 // void quick_sort(int* array, int len_array)
@@ -105,6 +106,8 @@ void shaker_sort(int* array, int len_array)
 
 void print_array(int* array, int len_array)
 {
+    assert(array[-1] == 67 && array[len_array] == 69);
+    
     for (int i = 0; i < len_array; i++)
     {
         if (array[i] != 0)
