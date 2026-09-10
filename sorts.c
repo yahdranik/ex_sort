@@ -11,17 +11,21 @@ void bubble_sort(int* array, int len_array);
 void print_array(int* array, int len_array);
 void match_elements(int* elem_1, int* elem_2);
 void shaker_sort(int* array, int len_array);
+void quick_sort(int* array, size_t len_array);
 
 int main()
 {
     int initial_array_1[MAX_LEN] = {67, 2, 10, 66, 77, 20, 21, 43, 42, 52, 80}; // канарейки есть
     int initial_array_2[MAX_LEN] = {67, 2, 10, 66, 77, 20, 21, 43, 42, 52, 80};
+    int initial_array_3[MAX_LEN] = {67, 2, 10, 66, 77, 20, 21, 43, 42, 52, 80};
 
     initial_array_1[MAX_LEN - 1] = 69;
     initial_array_2[MAX_LEN - 1] = 69;
+    initial_array_3[MAX_LEN - 1] = 69;
 
     int* real_data_1 = initial_array_1 + 1;
     int* real_data_2 = initial_array_2 + 1;
+    int* real_data_3 = initial_array_3 + 1;
 
 // Bubble ----------------------------------------------------------------------------------
     printf(MY_BLUE_AND_CURSIVE "Before Bubble Sort:  " MY_END_CUSTOM);
@@ -44,6 +48,15 @@ int main()
     print_array(real_data_2, MAX_LEN - 2);
 
     printf(MY_GREEN_AND_CURSIVE "%s\n", "~~~~~~~~~~~~~~~~~~" MY_END_CUSTOM);
+
+// Quick --------------------------------------------------------------------------------------
+    printf(MY_BLUE_AND_CURSIVE "Before Quick Sort:  " MY_END_CUSTOM);
+    print_array(real_data_3, MAX_LEN - 2);
+
+    quick_sort(real_data_3, MAX_LEN - 2);
+
+    printf(MY_BLUE_AND_CURSIVE "After Quick Sort:  " MY_END_CUSTOM);
+    print_array(real_data_3, MAX_LEN - 2);
 }
 
 void bubble_sort(int* array, int len_array)
@@ -99,10 +112,48 @@ void shaker_sort(int* array, int len_array)
     assert(array[-1] == 67 && array[len_array] == 69);
 }
 
-// void quick_sort(int* array, int len_array)
-// {
+void quick_sort(int* array, size_t len_array)
+{
+    if (len_array == 2)
+    {
+        if (array[0] > array[1])
+        {
+            match_elements(&array[0], &array[1]);
+            return;
+        }
+    }
 
-// }
+    if (len_array <= 1)
+    {
+        return;
+    }
+
+    int* pivot = array;
+    int* left = array + 1;
+    int* right = array + len_array - 1;
+
+    while ( right > left )
+    {
+        while (*left <= *pivot && right >= left)
+        {
+            left++;
+        }
+        
+        while (*right > *pivot && right >= left)
+        {
+            right--;
+        }
+
+        if (left < right)
+        {
+            match_elements(left, right);
+        }
+    }
+
+    match_elements(pivot, right);
+    quick_sort(array, right - array);
+    quick_sort(right + 1, len_array - (right - array) - 1);
+}
 
 void print_array(int* array, int len_array)
 {
