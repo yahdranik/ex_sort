@@ -6,10 +6,11 @@
 #define MY_GREEN_AND_CURSIVE   "\033[3;32m"
 
 const int MAX_LEN = 100;
+const size_t ONE = 1;
 
 void bubble_sort(int* array, int len_array);
 void print_array(int* array, int len_array);
-void match_elements(int* elem_1, int* elem_2);
+void swap(int* elem_1, int* elem_2);
 void shaker_sort(int* array, int len_array);
 void quick_sort(int* array, size_t len_array);
 
@@ -69,7 +70,7 @@ void bubble_sort(int* array, int len_array)
         {
             if (array[j] > array[j + 1])
             {
-                match_elements(&array[j], &array[j + 1]);
+                swap(&array[j], &array[j + 1]);
                 assert(array[-1] == 67 && array[len_array] == 69);
             }
         }
@@ -91,7 +92,7 @@ void shaker_sort(int* array, int len_array)
         {
             if (array[j] > array[j + 1])
             {
-                match_elements(&array[j], &array[j + 1]);
+                swap(&array[j], &array[j + 1]);
                 complite = 1;
 
                 assert(array[-1] == 67 && array[len_array] == 69);
@@ -102,7 +103,7 @@ void shaker_sort(int* array, int len_array)
         {
             if (array[i] < array[i - 1])
             {
-                match_elements(&array[i - 1], &array[i]);
+                swap(&array[i - 1], &array[i]);
                 complite = 1;
 
                 assert(array[-1] == 67 && array[len_array] == 69);
@@ -112,66 +113,61 @@ void shaker_sort(int* array, int len_array)
     assert(array[-1] == 67 && array[len_array] == 69);
 }
 
-void quick_sort(int* array, size_t len_array)
+void quick_sort(void* array, size_t len_array, size_t size_element, int (*compare)(const void* a, const void* b))
 {
-    if (len_array == 2)
-    {
-        if (array[0] > array[1])
-        {
-            match_elements(&array[0], &array[1]);
-            return;
-        }
-    }
+    uint8_t* ptr = (uint8_t *) array;
 
     if (len_array <= 1)
     {
         return;
     }
 
-    int* pivot = array;
-    int* left = array + 1;
-    int* right = array + len_array - 1;
+    uint8_t* pivot = ptr;
+    uint8_t* left = ptr + size_element;
+    uint8_t* right = ptr + len_array * size_element - size_element;
 
     while ( right > left )
     {
-        while (*left <= *pivot && right >= left)
+        while (compare(left, pivot) <= 0 && right >= left)
         {
-            left++;
+            left += size_element;
         }
         
-        while (*right > *pivot && right >= left)
+        while (compare(right, pivot) > 0 && right >= left)
         {
-            right--;
+            right -= size_element;
         }
 
         if (left < right)
         {
-            match_elements(left, right);
+            swap(left, right, size_element);
         }
     }
 
-    match_elements(pivot, right);
-    quick_sort(array, right - array);
-    quick_sort(right + 1, len_array - (right - array) - 1);
+    swap(pivot, right, size_element);
+    quick_sort(ptr, (right - ptr) / size_element, size_element, compare);
+    quick_sort(right + size_element, len_array - (right - ptr) / size_element - 1, size_element, compare);
 }
 
-void print_array(int* array, int len_array)
-{
-    assert(array[-1] == 67 && array[len_array] == 69);
-    
+void print_array(void* array, size_t len_array)
+{   
+    char* ptr = (char*) array;
+
     for (int i = 0; i < len_array; i++)
     {
-        if (array[i] != 0)
+        if (ptr[i] != 0)
         {
-            printf("%d ", array[i]);
+            printf("%d ", ptr[i]);
         }
     }
     printf("\n");
 }
 
-void match_elements(int* elem_1, int* elem_2)
+void swap(void* elem_1, void* elem_2, size_t size_element)
 {
-    int temp = *elem_1;
-    *elem_1 = *elem_2;
-    *elem_2 = temp;
+    uint8_t temp[size_element];
+    memcpy(temp, elem_1, size_element);
+    memcpy(elem_1, elem_2, size_element);
+    memcpy(elem_2, temp, size_element);
+
 }
